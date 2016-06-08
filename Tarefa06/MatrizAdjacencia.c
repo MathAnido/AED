@@ -25,7 +25,7 @@ void liberaGrafo(TGrafo *x) {
 	free((*x).matriz);
 }
 void imprimeGrafo(TGrafo *x) {
-	int i, j, contA = 0,contA = 0;
+	int i, j, contA = 0,contB = 0;
 	for(i = 0; i < (*x).nVertice; i++) {
 		printf("%d", i + 1);
 		for(j = 0; j < (*x).nVertice; j++){
