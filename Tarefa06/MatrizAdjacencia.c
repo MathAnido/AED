@@ -25,21 +25,19 @@ void liberaGrafo(TGrafo *x) {
 	free((*x).matriz);
 }
 void imprimeGrafo(TGrafo *x) {
-	int i, j, cont = 0;
+	int i, j, contA = 0,contA = 0;
 	for(i = 0; i < (*x).nVertice; i++) {
 		printf("%d", i + 1);
-		for(j = 0; j < (*x).nVertice; j++)
-			if((*(*((*x).matriz + j) + i)) == 1)cont++;
-		printf(" %d", cont);
-		cont = 0;
-		for(j = 0; j < (*x).nVertice; j++)
-			if((*(*((*x).matriz + i) + j)) == 1)cont++;
-		printf(" %d", cont);
+		for(j = 0; j < (*x).nVertice; j++){
+			if((*(*((*x).matriz + j) + i)) == 1)contA++;
+			if((*(*((*x).matriz + i) + j)) == 1)contB++;
+		}
+		printf(" %d% %d", contA,contB);
 		for(j = 0; j < (*x).nVertice; j++)
 			if((*(*((*x).matriz + i) + j)) == 1)
                 printf(" %d",j+1);
 		printf("\n");
-		cont = 0;
+		contA= contB = 0;
 	}
 }
 int main(void) {
