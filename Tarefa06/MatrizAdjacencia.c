@@ -6,38 +6,36 @@ typedef struct grafo {
 TGrafo * iniciaGrafo(int nV, int nA) {
 	int i;
 	TGrafo * novo = (TGrafo *)malloc(sizeof(TGrafo));
-	(*novo).matriz = calloc(nV, sizeof(int));
+	(*novo).matriz =(int **) calloc(nV, sizeof(int*));
 	for(i = 0; i < nV; i++) {
-		*((*novo).matriz + i) = calloc(nV, sizeof(int));
+		*((*novo).matriz + i) = (int *) calloc(nV, sizeof(int));
 	}
 	(*novo).nVertice = nV;
 	(*novo).nAresta = nA;
 	return novo;
 }
 void insereAresta(TGrafo *x, int y, int z) {
-	*(*((*x).matriz + y - 1) + z - 1) = 1;
-}
-void liberaGrafo(TGrafo *x) {
-	int i;
-	for(i = 0; i < (*x).nVertice; i++) {
-		free(*((*x).matriz + i));
-	}
-	free((*x).matriz);
+	if(y <= (*x).nVertice && z <= (*x).nVertice)
+		*(*((*x).matriz + y - 1) + z - 1) = 1;
 }
 void imprimeGrafo(TGrafo *x) {
-	int i, j, contA = 0,contB = 0;
+	int i, j, contA = 0, contB = 0;
 	for(i = 0; i < (*x).nVertice; i++) {
 		printf("%d", i + 1);
-		for(j = 0; j < (*x).nVertice; j++){
-			if((*(*((*x).matriz + j) + i)) == 1)contA++;
-			if((*(*((*x).matriz + i) + j)) == 1)contB++;
-		}
-		printf(" %d% %d", contA,contB);
-		for(j = 0; j < (*x).nVertice; j++)
+		for(j = 0; j < (*x).nVertice; j++) {
+			if((*(*((*x).matriz + j) + i)) == 1)
+				contA++;
 			if((*(*((*x).matriz + i) + j)) == 1)
-                printf(" %d",j+1);
+				contB++;
+		}
+		printf(" %d %d", contA, contB);
+		if(contB > 0) {
+			for(j = 0; j < (*x).nVertice; j++)
+				if((*(*((*x).matriz + i) + j)) == 1)
+					printf(" %d", j + 1);
+		}
 		printf("\n");
-		contA= contB = 0;
+		contA = contB = 0;
 	}
 }
 int main(void) {
@@ -50,6 +48,6 @@ int main(void) {
 		insereAresta(grafo1, x, y);
 	}
 	imprimeGrafo(grafo1);
-	liberaGrafo(grafo1);
+	free(grafo1);
 	return 0;
 }
