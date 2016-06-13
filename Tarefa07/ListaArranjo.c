@@ -6,17 +6,16 @@ typedef struct arvore {
 } TArvore;
 void iniciaArvore(TArvore *x, int n) {
 	int i;
-	for(i = 0; i < MAX; i++) {
+	for(i = 0; i < MAX; i++) 
 		*((*x).vetor + i) = 0;
-	}
 	(*x).n = n;
 }
 int insereNo(TArvore *x, int p, int f) { // (p) Nó Pai | (f) Nó Filho
 	//if(*((*x).vetor + p - 1) == 0) return 0; //verifica se existe nó pai
 	if(*((*x).vetor + (2 * p) - 1) == 0) //verifica nó esquerdo vazio
 		*((*x).vetor + (2 * p) - 1) = 1; //insere no esquerdo
-	else if(*((*x).vetor + (2 * p + 1) - 1) == 0) //verifica nó direito vazio
-		*((*x).vetor + (2 * p + 1) - 1) = 1; //insere no direito
+	else if(*((*x).vetor + (2 * p)) == 0) //verifica nó direito vazio
+		*((*x).vetor + (2 * p)) = 1; //insere no direito
 	else return 0;
 	return 1;
 }
@@ -24,7 +23,7 @@ void imprimeArvore(TArvore *x, int n) {
 	printf("(%d", n);
 	if(*((*x).vetor + (2 * n) - 1) == 1) { //verifica existe nó esquerdo
 		imprimeArvore(x, 2 * n);
-		if(*((*x).vetor + (2 * n + 1) - 1) == 1) //verifica existe nó direito se existir o esquerdo
+		if(*((*x).vetor + (2 * n)) == 1) //verifica existe nó direito se existir o esquerdo
 			imprimeArvore(x, 2 * n + 1);
 	}
 	printf(")");
