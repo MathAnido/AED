@@ -1,64 +1,77 @@
 #include <stdio.h>
 #include <stdlib.h>
-typedef struct no {
-	int n;
-	struct no *esquerda, *direita;
+typedef struct lista
+{
+    int tam;
+    struct no * primeiro,*ultimo;
+} TLista;
+typedef struct no
+{
+    int n;
+    struct no *prox;
+    TLista filhos;
 } TNo;
-typedef struct arvore {
-	TNo * raiz;
-} TArvore;
-
-TNo * iniciaNo(int n) {
-	TNo * novo = (TNo *) malloc(sizeof(TNo));
-	(*novo).n = n;
-	(*novo).esquerda = (*novo).direita = NULL;
-	return novo;
+void iniciaLista(TLista *x)
+{
+    (*x).tam = 0;
+    (*x).primeiro = (*x).ultimo = NULL;
 }
-void iniciaArvore(TArvore *x) {
-	(*x).raiz = iniciaNo(1);
+TNo * iniciaNo(int n)
+{
+    TNo * novo = (TNo *) malloc(sizeof(TNo));
+    (*novo).n = n;
+    (*novo).prox = NULL;
+    iniciaLista(&(*novo).filhos);
+    return novo;
 }
-void insereNo(TNo * x, int p, TNo *f) { // (p) Nó Pai | (f) Nó Filho
-	if((*x).n == p) { //verifica se eh o no pai
-		if((*x).esquerda == NULL)//verifica esquerda
-			(*x).esquerda = f;
-		else if((*x).direita == NULL)//verifica direita se tiver esquerda
-			(*x).direita = f;
-	} else {
-		if((*x).esquerda != NULL) {
-			insereNo((*x).esquerda, p, f);
-			if((*x).direita != NULL)
-				insereNo((*x).direita, p, f);
-		}
-	}
+int insereLista(TLista *x, TNo * y)
+{
+    if((*x).tam == 0)///lista esta vazia
+        (*x).primeiro = (*x).ultimo = y;
+    else
+    {
+        (*(*x).ultimo).prox = y;
+        (*x).ultimo = y;
+    }
+    (*x).tam++;
 }
-void imprimeArvore(TNo *x) {
-	printf("(%d", (*x).n);
-	if((*x).esquerda != NULL) {
-		imprimeArvore((*x).esquerda);
-		if((*x).direita != NULL)
-			imprimeArvore((*x).direita);
-	}
-	printf(")");
+void insereNo(TNo *x, int p,TNo * f)/// (x) No atual | (p) N do Pai | (f) Nó filho
+{
+    TNo *aux;///Primeiro No da arvore
+    if((*x).n == p) ///Verifica se eh o pai
+        insereLista(&(*x).filhos,f);
+    else if((*x).filhos.tam > 0) ///Verifica se tem filhos
+        for(aux = (*x).filhos.primeiro; aux!=NULL; aux= (*aux).prox) ///Percorre filhos
+            insereNo(aux,p,f);
+}
+void imprimeArvore(TNo *x)
+{
+    TNo * aux;
+    printf("(%d",(*x).n);
+    if((*x).filhos.tam > 0)
+        for(aux = (*x).filhos.primeiro; aux != NULL; aux = (*aux).prox) ///Percorre filhos
+            imprimeArvore(aux);
+    printf(")");
 }
 void liberaArvore(TNo *x)
 {
-    if((*x).esquerda != NULL) {
-		liberaArvore((*x).esquerda);
-		if((*x).direita != NULL)
-			liberaArvore((*x).direita);
-	}
+    TNo * aux;
+    if((*x).filhos.tam > 0)
+        for(aux = (*x).filhos.primeiro; aux != NULL; aux = (*aux).prox) ///Percorre filhos
+            liberaArvore(aux);
     free(x);
 }
-int main(void) {
-	TArvore *arvore1 = (TArvore*) malloc(sizeof(TArvore));
-	int n, m, i, p, f;
-	scanf("%d %d", &n, &m);
-	iniciaArvore(arvore1);
-	for(i = 0; i < m; i++) {
-		scanf("%d %d", &p, &f);
-		insereNo((*arvore1).raiz, p, iniciaNo(f));
-	}
-	imprimeArvore((*arvore1).raiz);
-	liberaArvore((*arvore1).raiz);
-	return 0;
+int main(void)
+{
+    TNo * raiz = iniciaNo(1);///Arvore
+    int n,d,i,x,y;
+    scanf("%d %d",&n,&d);
+    for(i=0; i<d; i++)
+    {
+        scanf("%d %d",&x,&y);
+        insereNo(raiz,x,iniciaNo(y));
+    }
+    imprimeArvore(raiz);
+    liberaArvore(raiz);
+    return 0;
 }
