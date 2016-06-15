@@ -1,43 +1,79 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define MAX 1000
-typedef struct arvore {
-	int vetor[MAX], n;
-} TArvore;
-void iniciaArvore(TArvore *x, int n) {
-	int i;
-	for(i = 0; i < MAX; i++) 
-		*((*x).vetor + i) = 0;
-	(*x).n = n;
+#define max 1000
+typedef struct lista
+{
+    int primeiro,ultimo,tam;
+    struct no *vetor[max];
+} TLista;
+typedef struct no
+{
+    int n;
+    TLista filhos;
+} TNo;
+void iniciaLista(TLista *x)
+{
+    (*x).primeiro = (*x).ultimo = -1;
+    (*x).tam = 0;
 }
-int insereNo(TArvore *x, int p, int f) { // (p) Nó Pai | (f) Nó Filho
-	//if(*((*x).vetor + p - 1) == 0) return 0; //verifica se existe nó pai
-	if(*((*x).vetor + (2 * p) - 1) == 0) //verifica nó esquerdo vazio
-		*((*x).vetor + (2 * p) - 1) = 1; //insere no esquerdo
-	else if(*((*x).vetor + (2 * p)) == 0) //verifica nó direito vazio
-		*((*x).vetor + (2 * p)) = 1; //insere no direito
-	else return 0;
-	return 1;
+TNo * iniciaNo(int n)
+{
+    TNo * novo = (TNo *) malloc(sizeof(TNo));
+    (*novo).n = n;
+    iniciaLista(&(*novo).filhos);
+    return novo;
 }
-void imprimeArvore(TArvore *x, int n) {
-	printf("(%d", n);
-	if(*((*x).vetor + (2 * n) - 1) == 1) { //verifica existe nó esquerdo
-		imprimeArvore(x, 2 * n);
-		if(*((*x).vetor + (2 * n)) == 1) //verifica existe nó direito se existir o esquerdo
-			imprimeArvore(x, 2 * n + 1);
-	}
-	printf(")");
+int insereLista(TLista *x, TNo * y)
+{
+    if((*x).tam == 0) ///lista esta vazia
+    {
+        (*x).primeiro = (*x).ultimo = 0;
+        *((*x).vetor + (*x).primeiro)= y;
+    }
+    else
+    {
+        (*x).ultimo++;
+        *((*x).vetor + (*x).ultimo)= y;
+    }
+    (*x).tam++;
 }
-int main(void) {
-	TArvore *arvore1 = (TArvore*) malloc(sizeof(TArvore));
-	int n, m, i, p, f;
-	scanf("%d %d", &n, &m);
-	iniciaArvore(arvore1, n);
-	for(i = 0; i < m; i++) {
-		scanf("%d %d", &p, &f);
-		insereNo(arvore1, p, f);
-	}
-	imprimeArvore(arvore1, 1);
-	free(arvore1);
-	return 0;
+void insereNo(TNo *x, int p,TNo * f)/// (x) No atual | (p) N do Pai | (f) Nó filho
+{
+    int aux;///Primeiro No da arvore
+    if((*x).n == p) ///Verifica se eh o pai
+        insereLista(&(*x).filhos,f);
+    else if((*x).filhos.tam > 0) ///Verifica se tem filhos
+        for(aux = 0; aux<(*x).filhos.tam; aux++) ///Percorre filhos
+            insereNo((*x).filhos.vetor[aux],p,f);
+}
+void imprimeArvore(TNo *x)
+{
+    int aux;
+    printf("(%d",(*x).n);
+    if((*x).filhos.tam > 0)
+        for(aux = 0; aux<(*x).filhos.tam; aux++) ///Percorre filhos
+            imprimeArvore((*x).filhos.vetor[aux]);
+    printf(")");
+}
+void liberaArvore(TNo *x)
+{
+    int aux;
+    if((*x).filhos.tam > 0)
+        for(aux = 0; aux<(*x).filhos.tam; aux++) ///Percorre filhos
+            liberaArvore((*x).filhos.vetor[aux]);
+    free(x);
+}
+int main(void)
+{
+    TNo * raiz = iniciaNo(1);///Arvore
+    int n,d,i,x,y;
+    scanf("%d %d",&n,&d);
+    for(i=0; i<d; i++)
+    {
+        scanf("%d %d",&x,&y);
+        insereNo(raiz,x,iniciaNo(y));
+    }
+    imprimeArvore(raiz);
+    liberaArvore(raiz);
+    return 0;
 }
